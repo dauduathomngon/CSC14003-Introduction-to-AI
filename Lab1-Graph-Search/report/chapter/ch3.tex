@@ -1,0 +1,36 @@
+\chapter{So sánh các thuật toán tìm kiếm}
+
+\section{Giữa UCS, Greedy và $\text{A}^*$}
+
+Ta cứ xem rằng, cả 3 thuật toán UCS, Greedy và $\text{A}^*$ đều đánh giá nút kế tiếp mà nó sẽ mở rộng dựa trên một hàm đánh giá $f(n)$ nào đó với $n$ là nút nó chọn để đánh giá. Trong đó:
+\begin{itemize}
+    \item UCS chọn cho mình hàm $f(n) = path\_cost(n)$ với $path\_cost(n)$ là chi phí đường đi từ trạng thái ban đầu cho đến nút $n$.
+    \item Greedy chọn cho mình hàm $f(n) = h(n)$ với $h(n)$ là giá trị heuristic của nút $n$.
+    \item $\text{A}^*$ chọn cho mình hàm $f(n) = path\_cost(n) + h(n)$, ta có thể thấy $\text{A}^*$ đã tổng hợp và ``hoàn thiện'' hơn so với hai thuật toán trên.
+\end{itemize}
+
+Như phân tích về tìm kiếm có thông tin và không có thông tin ở phía trên, UCS thuộc tìm kiếm không có thông tin (do không có hàm heuristic để xác định trạng thái đích) và Greedy, $\text{A}^*$ thuộc tìm kiếm có thông tin.
+\vspace{7pt}
+
+Đầu tiên, ta xem $path\_cost$ như là ``tri thức của quá khứ'' còn $h$ như là ``tri thức của tương lại''. Lúc đó UCS sẽ có tri thức quá khứ để nó có thể tìm được đường đi nào có chi phí tối ưu nhất từ trạng thái ban đầu tới đích, thế nhưng nó thiếu đi tri thức tương lai, do đó nó không biết mình đã đến được gần trạng thái đích hay chưa, nên vẫn chưa quá tối ưu. Tiếp theo Greedy có tri thức tương lai, nhưng lại thiếu tri thức quá khứ, nên khi chọn những nút mà nó cho là có heuristic tốt nó sẽ bỏ qua hết các chi phí để đi đến nút nó, cho dù nó có tối ưu hay không. Lúc này ta xem Greedy như tối ưu cục bộ, những nút nó chọn sẽ tối ưu trong một thời điểm nhưng không tối ưu ở tất cả thời điểm. Còn $A^*$ sử dụng cả tri thức tương lai và quá khứ thế nên ta có thể xem nó là tối ưu nhất.
+\vspace{7pt}
+
+Thứ hai, trong trường hợp đơn giản đồ thị hữu hạn, Greedy luôn có tính đầy đủ, còn $\text{A}^*$ với UCS ta cần đảm bảo điều kiện các chi phí chuyển từ trạng thái này sang trạng thái khác (hay trọng số) phải lớn hơn một số dương $\epsilon$ nào đó, thế nên Greedy đảm bảo tính đầy đủ trong nhiều trường hợp hơn. Tiếp theo, về tính tối ưu, UCS luôn đảm bảo được tính tối ưu trong mọi trường hợp (việc trọng số âm khá khó để xảy ra nên ta sẽ không quan tâm đến nó), còn $\text{A}^*$ lại phụ thuộc vào việc ta có chọn được hàm heuristic chấp nhận được hay không, còn Greedy như ta đã nói phía trên, nó không có tính tối ưu do nó chỉ quan tâm đến các nút có heuristic tốt mà không quan tâm đến chi phí thật sự để đi đến nút đó.
+\vspace{7pt}
+
+Cuối cùng, về độ phức tạp thời gian cả Greedy và $\text{A}^*$ đều là $O(b^m)$ với $b$ là hệ số phân nhánh tiến tối đa của mỗi nút và $m$ là độ sâu tối đa của không gian trạng thái, trong khi đó UCS có độ phức tạp thời gian là $O(b^{C^*/\epsilon + 1})$ với $C^*$ là chi phí đường đi tối ưu và $\epsilon$ là số dương nào đó (ta có thể chọn $\epsilon$ để UCS thoả luôn tính đầy đủ) thế nên trong một vài trường hợp $\epsilon$ và $C^*$ đủ tốt thì UCS có thể nhanh hơn $\text{A}^*$ và cả Greedy. Cả 3 đều có độ phức tạp không gian giống với thời gian nên cũng tuỳ vào $\epsilon$ với $C^*$.
+
+\section{Giữa UCS và Dijkstra}
+Sự khác biệt đầu tiên chính là mục đích của UCS và Dijkstra, trong khi UCS muốn tìm được đường đi có chi phí tối ưu (đường đi ngắn nhất) từ trạng thái bắt đầu (nút đầu tiên) cho đến trạng thái đích (nút cuối cùng) thì Dijkstra sẽ tìm đường đi ngắn nhất từ một đỉnh (cách gọi khác của nút) $s$ mà ta chọn đến các đỉnh còn lại trong đồ thị (chứ không phải duy nhất một đỉnh như UCS).
+\vspace{7pt}
+
+Trước tiên, ta cần biết Dijkstra hoạt động như nào. Dijkstra dùng hai tập đỉnh là $S$ và $Q$ trong đó $S$ là chứa tất cả các đỉnh mà đường đi ngắn nhất từ $s$ tới nó được tìm thấy, ta có thể xem nó giống như $expanded$ trong UCS và $Q$ là một hàng đợi ưu tiên, cũng giống như $frontier$ của UCS, thế nhưng ta sẽ thêm tất cả các nút vào $Q$ ở ngay khi bắt đầu thay vì thêm lần lượt trong quá trình chạy như $frontier$ của UCS, điều này cũng là bất lợi của Dijkstra khi ta phải biết trước tất cả các nút để thêm vào, do đó không dùng được với những \textit{đồ thị không tường minh}\footnote{implicit graph: là những đồ thị mà đỉnh của nó không thể lưu dễ dàng trong bộ nhớ của máy tính được.}
+\vspace{7pt}
+
+Thứ hai, đó là vấn đề sử dụng bộ nhớ, Dijkstra phải thêm tất cả các node vào $Q$ từ ban đầu, giả sử mỗi nút có hệ số phân nhánh tiến là $b$ và độ sâu của đồ thị là $m$, nên nó phải lưu $b^m$ trong mọi trường hợp, trong khi đó, chỉ trường hợp xấu nhất UCS mới lưu $b^m$. Thế nên trong đa số trường hợp, UCS sử dụng bộ nhớ thấp hơn Dijkstra.
+\vspace{7pt}
+
+Thứ ba, đó là về thời gian chạy, từ mục đích của cả 2 thuật toán, ta có thể đoán rằng Dijkstra sẽ chạy lâu hơn UCS trong đa số trường hợp do Dijkstra phải đi đến tất cả các đỉnh để tìm được đường đi ngắn nhất, trong khi đó UCS chỉ cần tìm được đường đi ngắn nhất từ nút bắt đầu cho đến nút đích. Giả sử cả $Q$ và $frontier$ đều được dùng trên một cấu trúc dữ liệu giống nhau, trong đó có 2 hàm mà ta cần để ý là \textit{insert()} dùng để thêm nút vào hàng đợi và \textit{change\_priority()} dùng để thay đổi giá trị ưu tiên của nút trong hàng đợi. Do $Q$ phải thêm tất cả các nút vào từ đầu (dùng hàm \textit{insert()}) với giá trị ưu tiên là $\infty$ (trừ nút $s$ có giá trị ưu tiên là $0$) thế nên khi thay đổi giá trị ưu tiên một nút trong một lần chạy, ta lại dùng thêm \textit{change\_priority()} thay vì chỉ dùng duy nhất hàm \textit{insert()} trong cả quá trình chạy lẫn lúc bắt đầu như UCS.
+\vspace{7pt}
+
+Cuối cùng, kết luận lại, UCS sẽ tốt hơn Dijkstra trong đa số trường hợp và trong thực tế, UCS được sử dụng nhiều hơn và hiệu quả hơn.

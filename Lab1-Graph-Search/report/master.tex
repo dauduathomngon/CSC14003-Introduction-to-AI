@@ -1,0 +1,26 @@
+\input{preamble}
+
+\renewcommand{\P}{\mathbb{P}}
+\graphicspath{ {figure/} }
+
+\begin{document}
+
+% set up
+\include{front-page}
+\setcounter{tocdepth}{1}
+\tableofcontents
+\pagebreak
+
+% chapter
+\include{chapter/ch1}
+\include{chapter/ch2}
+\include{chapter/ch3}
+\include{chapter/ch4}
+
+% bib
+\nocite{*} 
+\bibliographystyle{unsrturl}
+\bibliography{ref}
+\addcontentsline{toc}{chapter}{Tài liệu tham khảo}
+
+\end{document}
